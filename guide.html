@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>How Do I Use This Library &#8212; Sound Machine 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=514cf933" />
+    
+    <script src="_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Welcome to Sound Machine!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="api.html" title="API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Sound Machine!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Sound Machine 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">How Do I Use This Library</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="how-do-i-use-this-library">
+<h1>How Do I Use This Library<a class="headerlink" href="#how-do-i-use-this-library" title="Link to this heading">¶</a></h1>
+<p>Good question!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sound</span>
+<span class="kn">from</span> <span class="nn">sound.notes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">inst</span> <span class="o">=</span> <span class="n">sound</span><span class="o">.</span><span class="n">instrument</span><span class="o">.</span><span class="n">ElectricBass</span><span class="p">()</span>
+<span class="n">inst</span><span class="o">.</span><span class="n">tempo</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="n">tune</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">note</span><span class="p">(</span><span class="n">C3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">inst</span><span class="o">.</span><span class="n">note</span><span class="p">(</span><span class="n">D3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">inst</span><span class="o">.</span><span class="n">note</span><span class="p">(</span><span class="n">E3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">inst</span><span class="o">.</span><span class="n">note</span><span class="p">(</span><span class="n">F3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">inst</span><span class="o">.</span><span class="n">note</span><span class="p">(</span><span class="n">G3</span><span class="p">)</span>
+<span class="n">tune</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The desirable result here is that the electric bass play a short ascending scale in C major at 120 beats per minute, one beat per note.
+That’s a pretty flashy example, though, so let’s start from first principles.</p>
+<section id="samples">
+<h2>Samples<a class="headerlink" href="#samples" title="Link to this heading">¶</a></h2>
+<p>All sounds that can be played by this framework are ultimately a series of samples (in the sense of that by default we output sound at 44100 samples per second).
+A Sample object, in this framework, is an infinitely long tone at maximum intensity generated from a very simple algorithm.
+Sample objects are found in the <code class="docutils literal notranslate"><span class="pre">sound.samples</span></code> submodule.
+For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sound</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">SineWave</span><span class="p">(</span><span class="mi">440</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(An infinitely long sound will be cut off at three seconds by default)</p>
+<p>This plays a sine wave of frequency 440Hz!
+Pretty cool. Other samples you can draw upon from this module are <code class="docutils literal notranslate"><span class="pre">SquareWave</span></code>, <code class="docutils literal notranslate"><span class="pre">SawtoothWave</span></code>, <code class="docutils literal notranslate"><span class="pre">TriangleWave</span></code>, <code class="docutils literal notranslate"><span class="pre">Noise</span></code>, <code class="docutils literal notranslate"><span class="pre">BrownNoise</span></code>, and <code class="docutils literal notranslate"><span class="pre">Digitar</span></code>.
+(<code class="docutils literal notranslate"><span class="pre">Digitar</span></code> implements the Karplus-Strong plucked string synthesis algorithm)</p>
+<p>The noise samples do not have a frequency parameter, because noise is untuned.
+The brown noise and digitar samples are what we call “impure” samples - instances of these classes keep state, and usually cannot access sound data out of order.
+If you ever run into an angry error or performance slows to a crawl, it might be because you’re taking an impure signal and trying to access its samples out or order.
+A quick fix for this is to simply call <code class="docutils literal notranslate"><span class="pre">.purify()</span></code> on the resulting object - note that this returns a new “purified” object, leaving the original unchanged.</p>
+</section>
+<section id="interlude-asts-lazy-evaluation-and-state">
+<h2>Interlude - ASTs, Lazy Evaluation, and State<a class="headerlink" href="#interlude-asts-lazy-evaluation-and-state" title="Link to this heading">¶</a></h2>
+<p>This is a good opportunity to talk about what’s under the hood and how you should think about class instances from this library!</p>
+<p>Every sound and signal object is lazily evaluated - when you say <code class="docutils literal notranslate"><span class="pre">sin</span> <span class="pre">=</span> <span class="pre">sound.sample.SineWave(440)</span></code>, no sine waves have been calculated.
+Instead, the <code class="docutils literal notranslate"><span class="pre">sin</span></code> variable now knows how to calculate the amplitude of the output signal at any given point in time.
+The interface for this is <code class="docutils literal notranslate"><span class="pre">.amplitude(x)</span></code>, which is present on any subclass of the <code class="docutils literal notranslate"><span class="pre">Signal</span></code> class.
+<code class="docutils literal notranslate"><span class="pre">x</span></code> is in frames, a unit of time bound to the sample rate (default: 44100 frames/sec).</p>
+<p>Now, you can use most common binary operators to combine sounds from this library.
+If you were to create a triangle wave <code class="docutils literal notranslate"><span class="pre">tri</span> <span class="pre">=</span> <span class="pre">sound.sample.TriangleWave(660)</span></code> and mix the two sounds together <code class="docutils literal notranslate"><span class="pre">result</span> <span class="pre">=</span> <span class="pre">(sin</span> <span class="pre">+</span> <span class="pre">tri)</span> <span class="pre">/</span> <span class="pre">2</span></code>, result is now the sound made by mixing together a 440Hz sine wave and a 660Hz triangle wave, equalized to not exceed the maximum intensity allowable.
+Still no sound data has been calculated.
+You can think of <code class="docutils literal notranslate"><span class="pre">result</span></code> as a node in an AST (abstract syntax tree):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>     <span class="n">divide</span>
+    <span class="o">/</span>      \
+  <span class="nb">sum</span>       <span class="mi">2</span>
+ <span class="o">/</span>   \
+<span class="n">sin</span>  <span class="n">tri</span>
+</pre></div>
+</div>
+<p>When you go to calculate the actual sound data for this signal by calling <code class="docutils literal notranslate"><span class="pre">result.amplitude(x)</span></code> (this is what sound.play does), the divide node asks for the amplitude at that frame from the sum, and the sum asks for the amplitude at that frame from the sine and triangle waves.
+The relevant code for this process is in <code class="docutils literal notranslate"><span class="pre">sound/sample.py</span></code> and <code class="docutils literal notranslate"><span class="pre">sound/signal.py</span></code>.</p>
+<p>This allows us to understand what happens when you call <code class="docutils literal notranslate"><span class="pre">.purify()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">purify</span>
+  <span class="o">|</span>
+  <span class="o">|</span>
+<span class="n">signal</span>
+</pre></div>
+</div>
+<p>The purifier is just another AST node with a signal as its source, but it additionally acts as a caching layer.
+It ensures that the signal is only ever asked for frame amplitudes in order, and that never asks the signal for the same frame twice.</p>
+<p>Now, imagine that we have a digitar instance, which is impure. <code class="docutils literal notranslate"><span class="pre">pluck</span> <span class="pre">=</span> <span class="pre">sound.sample.Digitar(440)</span></code>.
+If we attempt to reuse this sample, for example to compose a sound which is two plucks one after the other (<code class="docutils literal notranslate"><span class="pre">twoplucks</span> <span class="pre">=</span> <span class="pre">pluck</span> <span class="pre">+</span> <span class="pre">(pluck</span> <span class="pre">&gt;&gt;</span> <span class="pre">0.5)</span></code> (note that the shift operators take a sound and delay it in time by the given number of seconds)), we might run into some problems with the impurity of this sound:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="nb">sum</span>
+   <span class="o">/</span>   \
+<span class="n">pluck</span>  <span class="n">delay</span>
+      <span class="o">/</span>     \
+   <span class="n">pluck</span>    <span class="mf">0.5</span>
+</pre></div>
+</div>
+<p>When we attempt to play this sound, it takes an absurd amount of time to render, and then the resulting noise is not at all what we wanted.
+This is because of the internal state of the pluck object!
+Rendering proceeds as normal for the first 0.5 seconds, then slows to a crawl when we start to render the second pluck.
+This is because we are using the same impure object twice.
+When we ask for a given frame from the sum node, it asks for the corresponding frame from pluck and delay.
+Then, delay asks for a different frame from pluck.
+The result is that the requests to pluck alternate back and forth in time, and when an impure sound is asked for a frame that is before the frame it is expecting to render next, it must rewind to the beginning and render each frame from the start to the requested frame.
+This means that the time complexity of this render operation has gone from linear to quadratic.</p>
+<p>The two solutions to this are to use two different Digitar instances for the two plucks, or to use the purified pluck.
+This way, the pluck object never has to rewind, since the earlier frames have been cached.</p>
+</section>
+<section id="back-to-business-envelopes">
+<h2>Back to business - Envelopes<a class="headerlink" href="#back-to-business-envelopes" title="Link to this heading">¶</a></h2>
+<p>So we can now generate tones in various wave types, and because I showed you how we overloaded the + and / binary operators, you can do additive synthesis.
+But these sounds are still infintely long and at constant volume.
+To make interesting sounds, we need envelopes.</p>
+<p>Envelopes (<code class="docutils literal notranslate"><span class="pre">sound.envelope</span></code>) implement the same Signal interface as Samples.
+The main envelopes provided are ADSR, Decay, and Line.
+They do pretty much what they sound like!
+If you want to know how to use them precisely, look at their docstrings - you can do this by typing in the python interpreter <code class="docutils literal notranslate"><span class="pre">help(sound.envelope.Line)</span></code>, or in the IPython interpreter, typing <code class="docutils literal notranslate"><span class="pre">sound.envelope.Line?</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>In [1]: import sound
+
+In [2]: sound.envelope.Line?
+Init signature: sound.envelope.Line(self, start, end, duration)
+Docstring:
+A linear line running from start[1] to end[2] in a given time[3] in seconds.
+
+*--__                   [1]
+     *--__
+          *--__
+               *--__    [2]
+       [3]
+File:           ~/proj/cs/cs130g/sound-machine/sound/envelope.py
+Type:           type
+
+In [3]:
+</pre></div>
+</div>
+<p>So if we wanted a really basic envelope for a sound lasting half a second that decays linearly, we’d say <code class="docutils literal notranslate"><span class="pre">line</span> <span class="pre">=</span> <span class="pre">sound.envelope.Line(1,</span> <span class="pre">0,</span> <span class="pre">0.3)</span></code>.</p>
+<p>Now that we have the envelope, let’s use it!
+We want to envelope this sound: <code class="docutils literal notranslate"><span class="pre">sin</span> <span class="pre">=</span> <span class="pre">sound.sample.SineWave(440)</span></code>
+So we just multiply the sound by the envelope: <code class="docutils literal notranslate"><span class="pre">result</span> <span class="pre">=</span> <span class="pre">sin</span> <span class="pre">*</span> <span class="pre">line</span></code>.</p>
+<p>That sounds pretty good!</p>
+</section>
+<section id="filters">
+<h2>Filters<a class="headerlink" href="#filters" title="Link to this heading">¶</a></h2>
+<p>This library has a lot of room to grow in the filters department.
+The currently implemented filters are high pass, low pass (both with very primitive algorithms), FM synth, ring modulator (AM synth), and pitch shift.
+If you’ve been following along with this guide, it shouldn’t be too hard to figure out how to use these filters - each of them acts as an AST node over other signals.</p>
+<p>For a full list of the filters and how to use each of them, look at the API docs.</p>
+</section>
+<section id="abstract-harder-instruments-and-notes">
+<h2>Abstract harder - Instruments and Notes<a class="headerlink" href="#abstract-harder-instruments-and-notes" title="Link to this heading">¶</a></h2>
+<p>So now that we can make interesting sounds, we want to assemble them into music - that’s kind of hard right now, since it’s super awkward to do these AST constructions by hand.
+This library comes with several predefined instruments in the <code class="docutils literal notranslate"><span class="pre">sound.instrument</span></code> module.
+Each instrument is a class whose instances may be used to produce notes.</p>
+<p>Let’s use an electric bass as an example. <code class="docutils literal notranslate"><span class="pre">bass</span> <span class="pre">=</span> <span class="pre">sound.instrument.ElectricBass()</span></code>.
+Now we can play a note! <code class="docutils literal notranslate"><span class="pre">bass.note(220).play()</span></code></p>
+<p>However, if we actually look at what <code class="docutils literal notranslate"><span class="pre">bass.note()</span></code> returns, we can see that it’s an instance of a special class called <code class="docutils literal notranslate"><span class="pre">Note</span></code>.
+This class implements the <code class="docutils literal notranslate"><span class="pre">Signal</span></code> interface and adds timing information to the sound.</p>
+<p>To illustrate this, let’s look at a new binary operator that is overloaded on <code class="docutils literal notranslate"><span class="pre">Signal</span></code> objets, <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>, the and operator.
+This is a concatenation operator, taking two signals and putting them end-to-end.
+It will fail entirely on infinite-length signals.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">note</span> <span class="o">=</span> <span class="n">sound</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">SineWave</span><span class="p">(</span><span class="mi">440</span><span class="p">)</span> <span class="o">*</span> <span class="n">sound</span><span class="o">.</span><span class="n">envelope</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+<span class="p">(</span><span class="n">note</span> <span class="o">&amp;</span> <span class="n">note</span> <span class="o">&amp;</span> <span class="n">note</span> <span class="o">&amp;</span> <span class="n">note</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This works, but if you wanted to make music with it, you’d be in for a hard time.
+Now, with the note abstraction:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The arguments to note are source, note value in beats, and length of a beat in samples</span>
+<span class="c1"># 120 bpm = 2 beats/sec, sample rate = 44100 frames/sec</span>
+<span class="n">note2</span> <span class="o">=</span> <span class="n">sound</span><span class="o">.</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">44100</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="n">note2</span> <span class="o">&amp;</span> <span class="n">note2</span> <span class="o">&amp;</span> <span class="n">note2</span> <span class="o">&amp;</span> <span class="n">note2</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now the notes are played to a beat!
+This is what the Note abstraction does - it changes the binary operator overloads to work in terms of beats, not in terms of seconds or samples.
+As another example, we used the <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> operator earlier to shift a sound by a number of seconds, when you shift a Note object, it instead shifts it by a number of beats.</p>
+<p>The tempo of notes produced by an instrument can be set by passing it as an argument to the instrument constructor, in beats per minute.
+When the instrument produces notes, they have a value of one beat by default, but you can pass the number of beats at which you want the note to be valued as a second parameter to <code class="docutils literal notranslate"><span class="pre">.note()</span></code>.</p>
+<p>Finally, <code class="docutils literal notranslate"><span class="pre">sound.notes</span></code> is a helper module that provides the values of all the notes from C0 to B9 as their frequencies, so you can type <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">sound.notes</span> <span class="pre">import</span> <span class="pre">*</span></code> and then you can just use the names of notes in place of passing in frequencies to notes, like <code class="docutils literal notranslate"><span class="pre">bass.note(A3)</span></code>.
+You can get sharps and flats by putting ‘s’ or ‘b’, respectively, after the note letter, like <code class="docutils literal notranslate"><span class="pre">Cs3</span></code>.</p>
+</section>
+<section id="that-s-it">
+<h2>That’s it!<a class="headerlink" href="#that-s-it" title="Link to this heading">¶</a></h2>
+<p>You now know how to synthesize interesting sounds and string them together in ways that are useful for writing music.
+Go forth and compose!</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">How Do I Use This Library</a><ul>
+<li><a class="reference internal" href="#samples">Samples</a></li>
+<li><a class="reference internal" href="#interlude-asts-lazy-evaluation-and-state">Interlude - ASTs, Lazy Evaluation, and State</a></li>
+<li><a class="reference internal" href="#back-to-business-envelopes">Back to business - Envelopes</a></li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#abstract-harder-instruments-and-notes">Abstract harder - Instruments and Notes</a></li>
+<li><a class="reference internal" href="#that-s-it">That’s it!</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Welcome to Sound Machine!</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="api.html"
+                          title="next chapter">API Reference</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/guide.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="api.html" title="API Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Sound Machine!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Sound Machine 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">How Do I Use This Library</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2016, Andrew Dutcher.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>
